@@ -1,5 +1,6 @@
 var webpack = require('webpack')
 var path = require('path')
+var HTMLWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
 	entry: path.resolve(__dirname, './src/js/index.js'),
@@ -8,9 +9,9 @@ module.exports = {
 		filename: 'bundle.js'
 	},
 	devServer: {
-		contentBase: './dist',
 		hot: true,
-		port: 3000
+		contentBase: path.resolve(__dirname, 'dist'),
+		publicPath: '/'
 	},
 	module: {
 		rules: [
@@ -25,5 +26,13 @@ module.exports = {
 				}
 			}
 		]
-	}
+	},
+	plugins: [
+		new HTMLWebpackPlugin({
+			title: 'react-test',
+			template: './index.html',
+			filename: 'index.html'
+		}),
+		new webpack.HotModuleReplacementPlugin()
+	]
 }
