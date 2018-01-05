@@ -3,7 +3,8 @@ var path = require('path')
 var HTMLWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-	entry: path.resolve(__dirname, './src/js/index.js'),
+	context: path.resolve(__dirname),
+	entry: path.resolve(__dirname, './src/js/router.js'),
 	output: {
 		path: path.resolve(__dirname, './dist'),
 		filename: 'bundle.js'
@@ -15,6 +16,10 @@ module.exports = {
 	},
 	module: {
 		rules: [
+			{
+				test: /\.css$/,
+				use: ['style-loader', 'css-loader']
+			},
 			{
 				test: /\.js$/,
 				exclude: /(node_modules)/,
