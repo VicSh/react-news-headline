@@ -33,13 +33,12 @@ export default class BodyIndex extends React.Component {
 	}
 
 	inputChangeValue(event){
-		console.log('*******')
 		this.setState({age: event.target.value})
 	}
 
   render() {
     return (<div>
-      <h1>这是一个body</h1>
+      <h1>这是一个body淡淡的</h1>
       <p>{this.props.username} {this.props.userId} {this.state.age}</p>
 			<input id="examp" ref="ress" type="button" value="提交" onClick={this.changeUserInfo.bind(this, 99)}/>
 			<Input placeholder="Basic usage" />
