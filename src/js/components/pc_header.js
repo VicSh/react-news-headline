@@ -1,14 +1,68 @@
 import React from 'react'
-import { Row, Col, Menu, Icon } from 'antd'
+import { Row, Col, Menu, Icon, Tabs, message,Form, Input, Button, CheckBox, Modal } from 'antd'
 
-export default class PCHeader extends React.Component{
+const FormItem = Form.Item
+const SubMenu = Menu.SubMenu
+const TabPane = Tabs.TabPane
+const MenuItemGroup = Menu.ItemGroup
+class PCHeader extends React.Component{
   constructor(){
     super();
     this.state = {
-      current: 'top'
+      current: 'top',
+      modalVisible: false,
+      action: 'login',
+      hasLogined: false,
+      userNickName: '',
+      userId: 0
     }
   }
+  setModalVisible(value){
+    this.setState({modalVisible: value})
+  }
+
+  handleClick(e){
+    if (e.key == 'register') {
+      this.setState({current: 'register'})
+      this.setModalVisible(true)
+    } else {
+      this.setState({current: e.key})
+    }
+  }
+
+  handleSubmit(e){
+    // 页面开始向api进行提交数据
+    e.preventDefault()
+    var myFetchOptions = {
+      method: 'GET'
+    }
+
+    var formData = this.props.form.getFieldsValue()
+    fetch('www.132asdasd.com', myFetchOptions).
+    then(response => response.json()).
+    then(json => {
+      this.setState({userNickName: json.NickUserName, userId: json.UserId})
+    })
+    message.success('请求成功！')
+    this.setModalVisible(false)
+  }
+
 	render(){
+    let {getFieldDecorator} = this.props.form
+    const userShow = this.state.hasLogined
+    ?
+    <Menu.Item key="logout" className="register">
+      <Botton type="primary" htmlType="button">{this.state.userNickName}</Botton>
+      &nbsp;&nbsp;
+      <Link target="_blank">
+        <Button type="dashed" htmlType="button">个人中心</Button>
+      </Link>
+      <Button type="ghost" htmlType="button">退出</Button>
+    </Menu.Item>
+    :
+    <Menu.Item key="register" className="register">
+      <Icon type="appstore"/>注册/登录
+    </Menu.Item>
 		return (
 			<header>
         <Row>
@@ -20,7 +74,7 @@ export default class PCHeader extends React.Component{
             </a>
           </Col>
           <Col span={16}>
-            <Menu mode="horizontal" selectedKeys={[this.state.current]}>
+            <Menu mode="horizontal" onClick={this.handleClick.bind(this)} selectedKeys={[this.state.current]}>
               <Menu.Item key="top">
                 <Icon type="appstore"></Icon>头条
               </Menu.Item>
@@ -45,7 +99,39 @@ export default class PCHeader extends React.Component{
               <Menu.Item key="shishang">
                 <Icon type="appstore"></Icon>时尚
               </Menu.Item>
+              {userShow}
             </Menu>
+
+
+            <Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalVisible} onCancel={() => {this.setModalVisible(false)}} onOk={() => {this.setModalVisible(false)}} cancelText="取消" okText="关闭">
+              <Tabs type="card">
+                <TabPane tab="注册" key="2">
+                  <Form layout="horizontal" onSubmit={this.handleSubmit.bind(this)}>
+                    <FormItem label="账户">
+                      {getFieldDecorator('r_userName')(<Input placeholder="请输入您的账号" />)}
+                    </FormItem>
+                    <FormItem label="密码">
+                      {getFieldDecorator('r_password')(<Input type="password" placeholder="请输入您的密码" />)}
+                    </FormItem>
+                    <FormItem label="确认密码">
+                      {getFieldDecorator('r_confirmpassword')(<Input  type="password" placeholder="请再次输入您的密码" />)}
+                    </FormItem>
+                    <Button type="primary" htmlType="submit"> 注册 </Button>
+                  </Form>
+                </TabPane>
+                <TabPane tab="登录" key="1">
+                  <Form layout="horizontal" onSubmit={this.handleSubmit.bind(this)}>
+                    <FormItem label="账户">
+                      {getFieldDecorator('r_userName')(<Input placeholder="请输入您的账号" />)}
+                    </FormItem>
+                    <FormItem label="密码">
+                      {getFieldDecorator('r_password')(<Input type="password" placeholder="请输入您的密码" />)}
+                    </FormItem>
+                    <Button type="primary" htmlType="submit"> 登陆 </Button>
+                  </Form>
+                </TabPane>
+              </Tabs>
+            </Modal>
           </Col>
           <Col span={2}></Col>
         </Row>
@@ -53,3 +139,5 @@ export default class PCHeader extends React.Component{
 		)
 	}
 }
+
+export default PCHeader = Form.create({})(PCHeader)
